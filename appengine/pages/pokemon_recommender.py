@@ -1,19 +1,25 @@
 import dash
 from dash import html, dcc, Input, Output, State, callback
 import json
+import os
+import pickle
 import plotly.express as px
 import plotly.graph_objects as go
 import pandas as pd
-from components.pokemon_move_recommender import train_model, build_predictor
+from components.pokemon_move_recommender import build_predictor
 
-# Load the data and train the model
+# Load Pokémon data for context/display (not training)
 with open("./components/data/gen9ou_full_data.json", "r") as f:
     pokemon_data = json.load(f)
 
-clf, scaler, pca, df, data = train_model(pokemon_data)
+# ✅ Load pre-trained model from pickle
+with open(os.path.join("models", "pokemon_model.pkl"), "rb") as f:
+    clf, scaler, pca, df, data = pickle.load(f)
+
+# ✅ Build the predictor
 recommend = build_predictor(clf, scaler, pca, data)
 
-# Create a function to get detailed Pokemon info
+# Get Pokémon info
 def get_pokemon_info(pokemon_name):
     pokemon = next((p for p in pokemon_data if p["Pokemon"] == pokemon_name), None)
     if not pokemon:
@@ -60,24 +66,20 @@ layout = html.Div([
 def update_output(n_clicks, pokemon1, pokemon2):
     if n_clicks > 0 and pokemon1 and pokemon2:
         try:
-            # Get recommendation
             recommendation = recommend(pokemon1, pokemon2)
             
-            # Get detailed info for both Pokemon
             p1_info = get_pokemon_info(pokemon1)
             p2_info = get_pokemon_info(pokemon2)
             
             if not p1_info or not p2_info:
                 return "Error: One or both Pokemon not found.", {}, {}
             
-            # Create move usage graph
             moves_df = pd.DataFrame(list(p1_info["moves"].items()), columns=['Move', 'Usage %'])
             move_fig = px.bar(moves_df, x='Move', y='Usage %', 
-                            title=f'{pokemon1} Move Usage',
-                            color='Usage %',
-                            color_continuous_scale='Viridis')
+                              title=f'{pokemon1} Move Usage',
+                              color='Usage %',
+                              color_continuous_scale='Viridis')
             
-            # Create counter graph
             counters_df = pd.DataFrame(p1_info["counters"])
             if not counters_df.empty:
                 counter_fig = go.Figure(data=[
@@ -93,10 +95,9 @@ def update_output(n_clicks, pokemon1, pokemon2):
             else:
                 counter_fig = go.Figure()
                 counter_fig.add_annotation(text="No counter data available",
-                                         xref="paper", yref="paper",
-                                         x=0.5, y=0.5, showarrow=False)
+                                           xref="paper", yref="paper",
+                                           x=0.5, y=0.5, showarrow=False)
             
-            # Create detailed recommendation output
             recommendation_output = html.Div([
                 html.H3('Recommendation:'),
                 html.P(recommendation),

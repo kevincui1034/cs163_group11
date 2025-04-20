@@ -1,5 +1,6 @@
 import json
 import pandas as pd
+print("[INFO] Importing sklearn.decomposition.PCA...")
 from sklearn.decomposition import PCA
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.preprocessing import StandardScaler
@@ -105,7 +106,7 @@ def build_predictor(model, scaler, pca, pokemon_data):
     return recommend_move
 
 if __name__ == "__main__":
-    with open("gen9ou_full_data.json", "r") as f:
+    with open("./data/gen9ou_full_data.json", "r") as f:
         pokemon_data = json.load(f)
 
     clf, scaler, pca, df, data = train_model(pokemon_data)

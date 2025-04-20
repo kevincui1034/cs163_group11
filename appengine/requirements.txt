@@ -3,6 +3,7 @@ dash_core_components
 dash_html_components
 dash_bootstrap_components
 dash_bootstrap_templates
+scikit-learn
 plotly
 plotly_express
 pandas
@@ -11,7 +12,4 @@ matplotlib
 seaborn
 Flask
 gunicorn
-gcloud
 google-cloud-storage
-dash-bootstrap-components
-dash-bootstrap-templates

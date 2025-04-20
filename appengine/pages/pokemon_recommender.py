@@ -4,10 +4,10 @@ import json
 import plotly.express as px
 import plotly.graph_objects as go
 import pandas as pd
-from pokemon_move_recommender import train_model, build_predictor
+from components.pokemon_move_recommender import train_model, build_predictor
 
 # Load the data and train the model
-with open("gen9ou_full_data.json", "r") as f:
+with open("./components/data/gen9ou_full_data.json", "r") as f:
     pokemon_data = json.load(f)
 
 clf, scaler, pca, df, data = train_model(pokemon_data)

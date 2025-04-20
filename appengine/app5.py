@@ -1,8 +1,18 @@
 import dash
 from dash import Dash, html, dcc
 import dash_bootstrap_components as dbc
+import pandas as pd
+from google.cloud import storage
+import os
+from io import StringIO
+import os
+print("🟢 Starting app5.py")
+print("Python version:", os.sys.version)
+print("Environment:", os.environ.get("GAE_ENV", "Not running on GAE"))
+
 app = Dash(__name__, use_pages=True, external_stylesheets=[dbc.themes.DARKLY, '/assets/custom.css'])
 
+server = app.server
 
 navbar = dbc.NavbarSimple(
     children=[

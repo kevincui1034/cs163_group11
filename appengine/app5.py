@@ -7,9 +7,9 @@ import os
 from io import StringIO
 import os
 
-print("🟢 Starting app5.py")
-print("Python version:", os.sys.version)
-print("Environment:", os.environ.get("GAE_ENV", "Not running on GAE"))
+# print("🟢 Starting app5.py")
+# print("Python version:", os.sys.version)
+# print("Environment:", os.environ.get("GAE_ENV", "Not running on GAE"))
 
 app = Dash(__name__, use_pages=True, external_stylesheets=[dbc.themes.DARKLY, '/assets/custom.css'])
 
@@ -21,7 +21,8 @@ navbar = dbc.NavbarSimple(
         dbc.NavItem(dbc.NavLink("Project Objective", href="/project_objective")),
         dbc.NavItem(dbc.NavLink("Analytical Methods", href="/analytical_methods")),
         dbc.NavItem(dbc.NavLink("Major Findings", href="/major_findings")),
-        dbc.NavItem(dbc.NavLink("Pokemon Recommender", href="/pokemon_recommender")),
+        dbc.NavItem(dbc.NavLink("Graphs", href="/graphs")),
+        # dbc.NavItem(dbc.NavLink("Pokemon Recommender", href="/pokemon_recommender")),
     ],
     brand=html.Span("What makes a good Pokemon?", style={'fontSize': '24px', 'fontWeight': 'bold'}),
     brand_href="/",

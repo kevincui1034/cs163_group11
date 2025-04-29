@@ -9,11 +9,19 @@ from sklearn.cluster import KMeans
 from sklearn.decomposition import PCA
 import matplotlib.pyplot as plt
 import numpy as np
+from google.cloud import storage
 
-# 📌 STEP 3: Load and parse JSON data
-file_path = './data/gen9ou_full_data.json'
-with open(file_path, 'r') as file:
-    data = json.load(file)
+# 📌 STEP 3: Load and parse JSON data from Google Cloud Storage
+def load_data_from_gcs():
+    storage_client = storage.Client()
+    bucket = storage_client.bucket('cs163-group11.appspot.com')
+    blob = bucket.blob('gen9ou_full_data.json')
+    
+    # Download the file content
+    content = blob.download_as_string()
+    return json.loads(content)
+
+data = load_data_from_gcs()
 
 # 📌 STEP 4: Create a DataFrame with teammates and viability
 rows = []

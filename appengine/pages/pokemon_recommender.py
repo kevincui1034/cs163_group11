@@ -25,7 +25,7 @@ def load_model_from_gcs():
 
     print("[INFO] Loading model from GCS...")
 
-    bucket_name = "cs163-pokemon-models"  # 🔁 Replace with your actual bucket name
+    bucket_name = "cs163-group11.appspot.com"  # 🔁 Replace with your actual bucket name
     blob_path = "models/pokemon_model.pkl"
 
     client = storage.Client()

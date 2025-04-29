@@ -1,7 +1,7 @@
 import dash
 from dash import html, dcc, callback, Input, Output
 
-dash.register_page(__name__)
+dash.register_page(__name__, path='/analytical_methods')
 
 layout = html.Div([
     html.H1('This is our Analytics page'),

@@ -56,3 +56,34 @@
     color: #828282;
     font-weight: normal;
 }
+
+html {
+    scroll-behavior: smooth;
+}
+
+.page-container {
+    scroll-margin-top: 100px;
+}
+
+/* Style for Graphs */
+.graph-style {
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    overflow: hidden;
+    background: #1c1c1c; /* optional: match dark theme background */
+    padding: 10px;
+  }
+  
+  .graph-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px 0;
+  }
+  
+  .graph-wrapper {
+    width: 90%;
+    max-width: 900px; /* cap the graph width */
+  }
+  
+  

@@ -18,8 +18,9 @@ server = app.server
 navbar = dbc.NavbarSimple(
     children=[
         dbc.NavItem(dbc.NavLink("Home", href="/")),
-        dbc.NavItem(dbc.NavLink("Data", href="/data")),
-        dbc.NavItem(dbc.NavLink("Graphs", href="/graphs")),
+        dbc.NavItem(dbc.NavLink("Project Objective", href="/project_objective")),
+        dbc.NavItem(dbc.NavLink("Analytical Methods", href="/analytical_methods")),
+        dbc.NavItem(dbc.NavLink("Major Findings", href="/major_findings")),
         dbc.NavItem(dbc.NavLink("Pokemon Recommender", href="/pokemon_recommender")),
     ],
     brand=html.Span("What makes a good Pokemon?", style={'fontSize': '24px', 'fontWeight': 'bold'}),

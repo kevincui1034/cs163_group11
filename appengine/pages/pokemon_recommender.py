@@ -1,8 +1,6 @@
 import dash
 from dash import html, dcc, Input, Output, State, callback
 import json
-import os
-import pickle
 import tempfile
 import plotly.express as px
 import plotly.graph_objects as go

@@ -143,13 +143,18 @@ layout = html.Div([
     Input('k-dropdown', 'value')
 )
 def update_cluster_plot(k):
+    # Create a copy of df
+    df_copy = df.copy()
+
+    # Perform clustering
     kmeans = KMeans(n_clusters=k, random_state=42)
-    df['Cluster'] = kmeans.fit_predict(X_scaled)
-    
+    df_copy['Cluster'] = kmeans.fit_predict(X_scaled)
+
+    # Plot
     cluster_fig = px.scatter(
-        df, x='PCA1', y='PCA2', color='Cluster',
+        df_copy, x='PCA1', y='PCA2', color=df_copy['Cluster'].astype(str),
         title=f'K-means Clustering of Pokémon (k={k})',
-        labels={'PCA1': 'PCA Component 1', 'PCA2': 'PCA Component 2'},
-        color_continuous_scale='Set2'
+        labels={'PCA1': 'PCA Component 1', 'PCA2': 'PCA Component 2', 'color': 'Cluster'},
+        color_discrete_sequence=px.colors.qualitative.Set2
     )
     return cluster_fig

@@ -1,18 +1,23 @@
 import dash
 from dash import dcc, html, Input, Output
 import plotly.express as px
-import plotly.figure_factory as ff
 import pandas as pd
 import numpy as np
+import seaborn as sns
+import matplotlib.pyplot as plt
 from sklearn.preprocessing import StandardScaler
 from sklearn.cluster import KMeans
 from sklearn.decomposition import PCA
+import base64
+from io import BytesIO
 
 # Register page
 dash.register_page(__name__, path='/graphs')
 
 # --- Data Preparation ---
 df = pd.read_csv('https://raw.githubusercontent.com/lgreski/pokemonData/refs/heads/master/Pokemon.csv')
+
+# Mapping generation to region
 generation_to_region = {
     1: 'Kanto', 2: 'Johto', 3: 'Hoenn', 4: 'Sinnoh',
     5: 'Unova', 6: 'Kalos', 7: 'Alola', 8: 'Galar', 9: 'Paldea'
@@ -22,7 +27,7 @@ df['Region'] = df['Generation'].map(generation_to_region)
 # Stat columns
 stat_cols = ['HP', 'Attack', 'Defense', 'Sp. Atk', 'Sp. Def', 'Speed']
 
-# --- Correlation Heatmap ---
+# --- Correlation Heatmap (Plotly) ---
 region_dummies = pd.get_dummies(df['Region'])
 correlation_data = pd.concat([df[stat_cols], region_dummies], axis=1)
 correlation_matrix = correlation_data.corr()
@@ -35,9 +40,44 @@ heatmap_fig = px.imshow(
     title="Correlation Between Pokémon Stats and Regions"
 )
 
-# --- PCA for Clustering ---
+# --- Static Heatmap (Seaborn) ---
+numeric_df = df.select_dtypes(include=[np.number])
+
+buffer_heatmap = BytesIO()
+plt.figure(figsize=(10, 6))
+sns.heatmap(numeric_df.corr(), annot=True, cmap="coolwarm", fmt=".2f")
+plt.title("Full Numeric Correlation Heatmap")
+plt.tight_layout()
+plt.savefig(buffer_heatmap, format="png")
+plt.close()
+buffer_heatmap.seek(0)
+static_heatmap_base64 = base64.b64encode(buffer_heatmap.read()).decode('utf-8')
+
+# --- Elbow Method for Optimal k ---
 scaler = StandardScaler()
 X_scaled = scaler.fit_transform(df[stat_cols])
+
+inertia = []
+k_range = range(1, 11)
+for k in k_range:
+    kmeans = KMeans(n_clusters=k, random_state=42)
+    kmeans.fit(X_scaled)
+    inertia.append(kmeans.inertia_)
+
+buffer_elbow = BytesIO()
+plt.figure(figsize=(8, 5))
+plt.plot(k_range, inertia, marker='o')
+plt.xlabel('Number of Clusters (k)')
+plt.ylabel('Inertia (SSE)')
+plt.title('Elbow Method For Optimal k')
+plt.grid(True)
+plt.tight_layout()
+plt.savefig(buffer_elbow, format="png")
+plt.close()
+buffer_elbow.seek(0)
+elbow_plot_base64 = base64.b64encode(buffer_elbow.read()).decode('utf-8')
+
+# --- PCA for Clustering ---
 pca = PCA(n_components=2)
 pca_components = pca.fit_transform(X_scaled)
 df['PCA1'] = pca_components[:, 0]
@@ -59,8 +99,20 @@ layout = html.Div([
     html.H1('Graphs Page', style={'textAlign': 'center'}),
 
     html.Div([
-        html.H2("Correlation Heatmap"),
+        html.H2("Correlation Heatmap (Interactive)"),
         dcc.Graph(figure=heatmap_fig)
+    ], style={'marginBottom': '50px'}),
+
+    html.Div([
+        html.H2("Full Numeric Correlation Heatmap (Static)"),
+        html.Img(src='data:image/png;base64,{}'.format(static_heatmap_base64),
+                 style={'maxWidth': '100%', 'height': 'auto', 'display': 'block', 'margin': '0 auto'})
+    ], style={'marginBottom': '50px'}),
+
+    html.Div([
+        html.H2("Elbow Method to Find Optimal k"),
+        html.Img(src='data:image/png;base64,{}'.format(elbow_plot_base64),
+                 style={'maxWidth': '100%', 'height': 'auto', 'display': 'block', 'margin': '0 auto'})
     ], style={'marginBottom': '50px'}),
 
     html.Div([

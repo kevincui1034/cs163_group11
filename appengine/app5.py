@@ -13,7 +13,7 @@ navbar = dbc.NavbarSimple(
         dbc.NavItem(dbc.NavLink("Project Objective", href="/project_objective")),
         dbc.NavItem(dbc.NavLink("Analytical Methods", href="/analytical_methods")),
         dbc.NavItem(dbc.NavLink("Major Findings", href="/major_findings")),
-        # Fix or comment out the recommender if not ready
+        # Not for prod, only for local
         # dbc.NavItem(dbc.NavLink("Pokemon Recommender", href="/pokemon_recommender")),
     ],
     brand=html.Span("What Makes a Good Pokémon?", style={'fontSize': '24px', 'fontWeight': 'bold'}),

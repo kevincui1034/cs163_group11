@@ -21,3 +21,8 @@ __pycache__/
 !requirements.txt
 !app.yaml
 !*.py
+
+/models
+*.pkl
+pokemon_recommender.py
+pokemon_move_recommender.py

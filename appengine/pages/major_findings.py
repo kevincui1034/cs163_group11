@@ -37,7 +37,12 @@ def load_gen9ou_data():
 
 # --- Load Pokémon Stats Data ---
 def load_pokemon_stats():
-    df = pd.read_csv('https://raw.githubusercontent.com/lgreski/pokemonData/refs/heads/master/Pokemon.csv')
+    storage_client2 = storage.Client()
+    bucket2 = storage_client2.bucket('cs163-group11.appspot.com')
+    blob2 = bucket2.blob('Pokemon.csv')
+    content2 = blob2.download_as_string()
+    df = pd.read_csv(io.BytesIO(content2))
+    
     generation_to_region = {
         1: 'Kanto', 2: 'Johto', 3: 'Hoenn', 4: 'Sinnoh',
         5: 'Unova', 6: 'Kalos', 7: 'Alola', 8: 'Galar', 9: 'Paldea'

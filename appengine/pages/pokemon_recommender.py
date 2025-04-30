@@ -8,7 +8,10 @@ import pandas as pd
 from google.cloud import storage
 from components.pokemon_move_recommender import build_predictor
 
-# Load Pokémon data for display/info
+
+### ONLY FOR LOCAL
+### TOO BIG FOR CLOUD
+
 with open("./components/data/gen9ou_full_data.json", "r") as f:
     pokemon_data = json.load(f)
 

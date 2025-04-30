@@ -12,7 +12,7 @@ import base64
 from io import BytesIO
 
 # Register page
-dash.register_page(__name__, path='/graphs')
+dash.register_page(__name__, path='/analytical_methods')
 
 # --- Data Preparation ---
 df = pd.read_csv('https://raw.githubusercontent.com/lgreski/pokemonData/refs/heads/master/Pokemon.csv')
@@ -39,19 +39,6 @@ heatmap_fig = px.imshow(
     labels=dict(x="Region", y="Stat", color="Correlation"),
     title="Correlation Between Pokémon Stats and Regions"
 )
-
-# --- Static Heatmap (Seaborn) ---
-numeric_df = df.select_dtypes(include=[np.number])
-
-buffer_heatmap = BytesIO()
-plt.figure(figsize=(10, 6))
-sns.heatmap(numeric_df.corr(), annot=True, cmap="coolwarm", fmt=".2f")
-plt.title("Full Numeric Correlation Heatmap")
-plt.tight_layout()
-plt.savefig(buffer_heatmap, format="png")
-plt.close()
-buffer_heatmap.seek(0)
-static_heatmap_base64 = base64.b64encode(buffer_heatmap.read()).decode('utf-8')
 
 # --- Elbow Method for Optimal k ---
 scaler = StandardScaler()
@@ -96,25 +83,47 @@ scatter_fig = px.scatter(
 
 # --- Layout ---
 layout = html.Div([
-    html.H1('Graphs Page', style={'textAlign': 'center'}),
-
+    html.H1('Analytical Methods', style={'textAlign': 'center'}),
+    
+    html.Div([
+        html.P(
+            "We examine the relationship between Pokémon stats and their corresponding generation. "
+            "Our main hypothesis is that Pokémon become stronger over time due to 'power creep'. "
+            "We first mapped each Pokémon's generation to its corresponding region, applied one-hot encoding "
+            "to region data, and combined it with the base stats to compute a correlation matrix. "
+            "From this, we extracted stat-to-region correlations and visualized them using a heatmap."
+        )
+    ], style={'marginBottom': '50px'}),
+    
     html.Div([
         html.H2("Correlation Heatmap (Interactive)"),
-        dcc.Graph(figure=heatmap_fig)
-    ], style={'marginBottom': '50px'}),
-
+        dcc.Graph(figure=heatmap_fig, className='graph-style')
+    ], style={'marginBottom': '70px'}),
+    
     html.Div([
-        html.H2("Full Numeric Correlation Heatmap (Static)"),
-        html.Img(src='data:image/png;base64,{}'.format(static_heatmap_base64),
-                 style={'maxWidth': '100%', 'height': 'auto', 'display': 'block', 'margin': '0 auto'})
+        html.P(
+            "Next, we performed K-means clustering and PCA to visualize Pokémon stat groupings. "
+            "Pokémon were clustered into four groups based on core battle stats and projected into two dimensions "
+            "for easier visualization."
+        )
     ], style={'marginBottom': '50px'}),
-
+    
     html.Div([
         html.H2("Elbow Method to Find Optimal k"),
-        html.Img(src='data:image/png;base64,{}'.format(elbow_plot_base64),
-                 style={'maxWidth': '100%', 'height': 'auto', 'display': 'block', 'margin': '0 auto'})
+        html.Img(
+            src='data:image/png;base64,{}'.format(elbow_plot_base64),
+            style={'maxWidth': '100%', 'height': 'auto', 'display': 'block', 'margin': '0 auto'}
+        )
+    ], style={'marginBottom': '70px'}),
+    
+    html.Div([
+        html.P(
+            "To determine the best number of clusters, we applied the Elbow Method. "
+            "This technique plots inertia (within-cluster sum of squares) for k = 1 to 10, "
+            "helping identify the point where adding more clusters yields diminishing returns."
+        )
     ], style={'marginBottom': '50px'}),
-
+    
     html.Div([
         html.H2("Interactive Clustering (K-Means)"),
         dcc.Dropdown(
@@ -124,12 +133,12 @@ layout = html.Div([
             clearable=False,
             style={'width': '200px', 'margin': '0 auto'}
         ),
-        dcc.Graph(id='cluster-graph')
-    ], style={'marginBottom': '50px'}),
+        dcc.Graph(id='cluster-graph', className='graph-style')
+    ], style={'marginBottom': '70px'}),
 
     html.Div([
         html.H2("Average Base Stats by Generation"),
-        dcc.Graph(figure=scatter_fig)
+        dcc.Graph(figure=scatter_fig, className='graph-style')
     ])
 ], style={
     'maxWidth': '1200px',
@@ -137,24 +146,20 @@ layout = html.Div([
     'padding': '20px'
 })
 
-# --- Callback for interactive clustering ---
+# --- Callback for clustering ---
 @dash.callback(
     Output('cluster-graph', 'figure'),
     Input('k-dropdown', 'value')
 )
 def update_cluster_plot(k):
-    # Create a copy of df
     df_copy = df.copy()
-
-    # Perform clustering
     kmeans = KMeans(n_clusters=k, random_state=42)
     df_copy['Cluster'] = kmeans.fit_predict(X_scaled)
 
-    # Plot
     cluster_fig = px.scatter(
-        df_copy, x='PCA1', y='PCA2', color=df_copy['Cluster'].astype(str),
+        df_copy, x='PCA1', y='PCA2', color='Cluster',
         title=f'K-means Clustering of Pokémon (k={k})',
-        labels={'PCA1': 'PCA Component 1', 'PCA2': 'PCA Component 2', 'color': 'Cluster'},
+        labels={'PCA1': 'PCA Component 1', 'PCA2': 'PCA Component 2', 'Cluster': 'Cluster'},
         color_discrete_sequence=px.colors.qualitative.Set2
     )
     return cluster_fig

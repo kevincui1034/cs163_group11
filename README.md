@@ -49,7 +49,7 @@ This repository contains a data analysis pipeline and web application focused on
    - Generate visualizations to represent data distributions and relationships.
 
 4. **Web Application Development:**
-   - Utilize Flask framework to build the backend.
+   - Utilizes Flask framework for web development.
    - Frontend interfaces to display analyses and visualizations.
    - Deploy the application using Google App Engine.
 

@@ -50,7 +50,7 @@ This repository contains a data analysis pipeline and web application focused on
 
 4. **Web Application Development:**
    - Utilizes Flask framework for web development.
-   - Frontend interfaces to display analyses and visualizations.
+   - Dash for styling and graphs.
    - Deploy the application using Google App Engine.
 
 ## Directory Structure

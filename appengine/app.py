@@ -2,7 +2,7 @@ import dash
 from dash import Dash, html
 import dash_bootstrap_components as dbc
 
-app = Dash(__name__, use_pages=True, external_stylesheets=[dbc.themes.DARKLY, '/assets/custom.css'])
+app = Dash(__name__, use_pages=True, external_stylesheets=[dbc.themes.BOOTSTRAP,'/assets/custom.css'])
 
 server = app.server
 
@@ -18,8 +18,6 @@ navbar = dbc.NavbarSimple(
     ],
     brand=html.Span("What Makes a Good Pokémon?", style={'fontSize': '24px', 'fontWeight': 'bold'}),
     brand_href="/",
-    color="dark",
-    dark=True,
 )
 
 # --- Footer ---

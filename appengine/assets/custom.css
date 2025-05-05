@@ -70,7 +70,7 @@ html {
     border-radius: 12px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
     overflow: hidden;
-    background: #1c1c1c; /* optional: match dark theme background */
+    background: #FFFFFF;
     padding: 10px;
   }
   
@@ -85,5 +85,4 @@ html {
     width: 90%;
     max-width: 900px; /* cap the graph width */
   }
-  
   

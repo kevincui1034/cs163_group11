@@ -33,8 +33,6 @@ This repository contains a data analysis pipeline and web application focused on
    pip install -r requirements.txt
    ```
 
-   *Note: Ensure that a `requirements.txt` file is present in the root directory listing all necessary packages.*
-
 ## Pipeline Overview
 
 1. **Data Collection:**
@@ -64,5 +62,3 @@ This repository contains a data analysis pipeline and web application focused on
 ## 🔗 Live Website
 
 Access the deployed web application here: [https://cs163-group11.uw.r.appspot.com/](https://cs163-group11.uw.r.appspot.com/)
-
-*Replace the above URL with the actual link to your deployed application.*

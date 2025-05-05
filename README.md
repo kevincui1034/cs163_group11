@@ -8,7 +8,7 @@ This repository contains a data analysis pipeline and web application focused on
 
 ### Prerequisites
 
-- Python 3.7 or higher
+- Python 3.10 or higher
 - pip (Python package installer)
 
 ### Installation
@@ -23,8 +23,8 @@ This repository contains a data analysis pipeline and web application focused on
 2. **Create and activate a virtual environment (optional but recommended):**
 
    ```bash
-   python -m venv venv
-   source venv/bin/activate  # On Windows: venv\Scripts\activate
+   python -m venv .venv
+   source ./.venv/bin/activate  # On Windows: .\.venv\Scripts\activate
    ```
 
 3. **Install required packages:**
@@ -36,8 +36,9 @@ This repository contains a data analysis pipeline and web application focused on
 ## Pipeline Overview
 
 1. **Data Collection:**
-   - Source Pokémon data from reputable datasets or APIs.
-   - Store raw data in a structured format (e.g., CSV, JSON).
+   - Sourced Pokémon data from Pokémon tournaments and gameplay
+   - Obtained general Pokémon data such as generation, stats, type etc.
+   - Stored data as CSV and JSON
 
 2. **Data Preprocessing:**
    - Clean and normalize data to ensure consistency.
@@ -48,16 +49,18 @@ This repository contains a data analysis pipeline and web application focused on
    - Generate visualizations to represent data distributions and relationships.
 
 4. **Web Application Development:**
-   - Utilize frameworks like Flask or Django to build the backend.
-   - Design frontend interfaces to display analyses and visualizations.
-   - Deploy the application using platforms like Google App Engine.
+   - Utilize Flask framework to build the backend.
+   - Frontend interfaces to display analyses and visualizations.
+   - Deploy the application using Google App Engine.
 
 ## Directory Structure
 
 - `/pokemon_analysis/`: Contains scripts and notebooks for data preprocessing and analysis.
-- `/appengine/`: Houses the web application code, including backend and frontend components.
-- `requirements.txt`: Lists all Python dependencies required to run the project.
-- `.gitignore`: Specifies files and directories to be ignored by Git.
+- `/appengine/`: Houses the web app functionality, components, data, routes.
+   - `/assets/`: For custom CSS styling.
+   - `/components/`: Functions used for page callbacks.
+      - `/data/`: Data for local deployment and testing.
+   - `/pages/`: Routes for each page of the website.
 
 ## 🔗 Live Website
 

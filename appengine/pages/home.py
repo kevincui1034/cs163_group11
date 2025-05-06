@@ -34,14 +34,14 @@ layout = html.Div([
             "This project bridges that gap by leveraging data science techniques to analyze how base stats, typings, "
             "abilities, and move pools influence competitive viability — and investigates regional and generational "
             "differences to see whether certain archetypes consistently exhibit superior traits.",
-            style={'textAlign': 'center', 'maxWidth': '800px', 'margin': '20px auto'}
+            style={'textAlign': 'center', 'maxWidth': '800px', 'marginTop': '20px'}
         ),
     ], style={
         'display': 'flex',
         'flexDirection': 'column',
         'alignItems': 'center',
         'justifyContent': 'center',
-        'padding': '20px',
+        'padding': '10px',
         'maxWidth': '1200px',
         'margin': '0 auto'
     }),
@@ -52,7 +52,7 @@ layout = html.Div([
         html.Div([
             html.H3("Distribution of Total Base Stats by Generation"),
             dcc.Graph(figure=fig_boxplot, className='graph-style'),
-        ], style={'marginBottom': '60px', 'marginTop': '20px'}),
+        ], style={'marginBottom': '60px'}),
 
         html.Div([
             html.P(
@@ -73,17 +73,21 @@ layout = html.Div([
         ], style={'marginBottom': '60px', 'marginTop': '20px'}),
         
         html.Div([
-            html.P(
-                "This heatmap shows how different base stats correlate with each other across all Pokémon. "
-                "Red indicates positive correlation, while blue indicates negative correlation. "
-                "For example, we can see that Attack and Special Attack tend to be negatively correlated, "
-                "suggesting that Pokémon are typically specialized in either physical or special attacks. "
-                "Similarly, Defense and Special Defense often show positive correlation, indicating that "
-                "defensive Pokémon tend to be well-rounded in both types of defense. "
-                "These insights are valuable for team building and understanding Pokémon stat distributions."
-            )
-        ], style={'marginBottom': '60px', 'marginTop': '20px'}),
-        
+            html.Div([
+                html.P([
+                    "This tells us what specific stat combinations we should focus on. ",
+                    "For example, we can neglect a speedy Pokemon with high Special Defense."
+                ], style={'marginBottom': '15px'}),
+                html.P([
+                    "We can see what specific combinations of Pokemon is relevant in terms of stats. ",
+                    "Using this heatmap, we can also use this information on each generation to find if there is a correlation between Pokemon generations and usability."
+                ], style={'marginBottom': '15px'}),
+                html.P([
+                    "This can also be used in Pokemon teambuilding, and if the player wants a high HP Pokemon, ",
+                    "what would be the optimal second stat they should look for."
+                ])
+            ],)
+        ])
     ], style={
         'maxWidth': '1200px',
         'margin': '0 auto',

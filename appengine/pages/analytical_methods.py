@@ -75,6 +75,30 @@ layout = html.Div([
     ], style={'marginBottom': '70px'}),
     
     html.Div([
+        html.Div([
+            html.P([
+                "Kalos Region Pokémon appear statistically stronger across the board in this dataset, possibly due to design choices in Gen 6 (e.g., Mega Evolutions or smaller Pokédex)."
+            ], style={'marginBottom': '15px'}),
+            html.P([
+                "Kanto Region Pokémon, being older designs, seem to have lower base stats, which could reflect power creep in later generations."
+            ], style={'marginBottom': '15px'}),
+            html.P([
+                "Correlations are mild overall; no value exceeds ±0.2, so while trends are visible, they're not extreme."
+            ], style={'marginBottom': '15px'}),
+            html.P([
+                "Although some generations may be stronger than others, it is not a recurring trend."
+            ])
+        ], style={
+            'maxWidth': '800px',
+            'margin': '0 auto',
+            'padding': '20px',
+            'backgroundColor': '#f8f9fa',
+            'borderRadius': '8px',
+            'boxShadow': '0 2px 4px rgba(0,0,0,0.1)'
+        })
+    ], style={'marginBottom': '70px'}),
+    
+    html.Div([
         html.P(
             "Next, we performed K-means clustering and PCA to visualize Pokémon stat groupings. "
             "Pokémon were clustered into four groups based on core battle stats and projected into two dimensions "

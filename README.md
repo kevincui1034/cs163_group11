@@ -31,8 +31,9 @@ This repository contains a data analysis pipeline and web application focused on
 ## Pipeline Overview
 
 1. **Data Collection:**
-   - Sourced Pokémon data from Pokémon tournaments and gameplay
+   - Sourced Pokémon data from Pokémon datasets and Smogon website.
    - Obtained general Pokémon data such as generation, stats, type etc.
+   - Obtained competetive Pokémon data such as usage rate, checks and counters, and moveset.
    - Stored data as CSV and JSON
 
 2. **Data Preprocessing:**

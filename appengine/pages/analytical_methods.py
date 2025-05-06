@@ -10,14 +10,14 @@ from sklearn.cluster import KMeans
 from sklearn.decomposition import PCA
 import base64
 from io import BytesIO
-from components.data_loader import load_pokemon_from_gcs, get_generation_to_region_mapping, get_stat_columns
+from components.data_loader import load_pokemon_data, get_generation_to_region_mapping, get_stat_columns
 from components.visualizations import create_correlation_heatmap, create_total_stats_scatter
 
 # Register page
 dash.register_page(__name__, path='/analytical_methods')
 
 # Load and prepare data
-df = load_pokemon_from_gcs()
+df = load_pokemon_data()
 df['Region'] = df['Generation'].map(get_generation_to_region_mapping())
 stat_cols = get_stat_columns()
 

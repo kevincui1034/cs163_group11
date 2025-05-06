@@ -1,6 +1,6 @@
 import dash
-from dash import html, dcc
-from components.data_loader import load_gen9ou_data, load_pokemon_from_gcs, get_generation_to_region_mapping, get_stat_columns
+from dash import html, dcc, callback, Input, Output
+from components.data_loader import load_gen9ou_data, load_pokemon_data, get_generation_to_region_mapping, get_stat_columns
 from components.visualizations import create_team_archetype_visuals, create_correlation_heatmap, create_total_stats_scatter
 
 # Register page
@@ -8,7 +8,7 @@ dash.register_page(__name__, path='/major_findings')
 
 # Load data
 df_gen9ou = load_gen9ou_data()
-df_stats = load_pokemon_from_gcs()
+df_stats = load_pokemon_data()
 df_stats['Region'] = df_stats['Generation'].map(get_generation_to_region_mapping())
 stat_cols = get_stat_columns()
 

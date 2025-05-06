@@ -76,6 +76,7 @@ def update_output(n_clicks, pokemon1, pokemon2):
             return recommendation_output, move_fig, counter_fig
 
         except Exception as e:
+            print(f"Error in update_output: {str(e)}")
             return html.Div([
                 html.H3('Error:'),
                 html.P(str(e))

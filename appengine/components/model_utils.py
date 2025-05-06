@@ -8,39 +8,34 @@ clf = scaler = pca = df = data = recommend = None
 model_loaded = False
 
 def load_model_from_gcs():
-    global clf, scaler, pca, df, data, recommend, model_loaded
-
-    if model_loaded:
-        return recommend
-
-    print("[INFO] Loading model from GCS...")
-
-    bucket_name = "cs163-group11.appspot.com"
-    blob_path = "models/pokemon_model.pkl"
-
-    client = storage.Client()
-    bucket = client.bucket(bucket_name)
-    blob = bucket.blob(blob_path)
-
-    with tempfile.NamedTemporaryFile() as temp_file:
-        blob.download_to_filename(temp_file.name)
-        with open(temp_file.name, "rb") as f:
-            clf, scaler, pca, df, data = pickle.load(f)
-
-    recommend = build_predictor(clf, scaler, pca, data)
-    model_loaded = True
-    print("[INFO] Model loaded and ready from GCS.")
-
-    return recommend
+    """Load the model from local file."""
+    from components.pokemon_move_recommender import load_model, build_predictor
+    import json
+    
+    # Load data and model
+    with open("./components/data/gen9ou_full_data.json", "r") as f:
+        pokemon_data = json.load(f)
+    
+    # Load model data (model, scaler, pca, df, data)
+    model_data = load_model()
+    if not isinstance(model_data, tuple) or len(model_data) != 5:
+        raise ValueError(f"Invalid model data format. Expected tuple with 5 elements, got {type(model_data)} with {len(model_data) if isinstance(model_data, tuple) else 'N/A'} elements")
+    
+    model, scaler, pca, _, _ = model_data  # Only need first 3 elements
+    
+    # Create and return predictor
+    return build_predictor(model, scaler, pca, pokemon_data)
 
 def get_pokemon_info(pokemon_name, pokemon_data):
-    pokemon = next((p for p in pokemon_data if p["Pokemon"] == pokemon_name), None)
-    if not pokemon:
-        return None
-    
-    return {
-        "moves": pokemon.get("Moves", {}),
-        "counters": pokemon.get("Checks and Counters", []),
-        "raw_count": pokemon.get("Raw Count", 0),
-        "viability_ceiling": pokemon.get("Viability Ceiling", 0)
-    } 
+    """Get Pokemon information from the data."""
+    for pokemon in pokemon_data:
+        if pokemon["Pokemon"].lower() == pokemon_name.lower():
+            moves = pokemon.get("Moves", {})
+            counters = pokemon.get("Checks and Counters", [])
+            return {
+                "raw_count": pokemon.get("Raw Count", 0),
+                "viability_ceiling": pokemon.get("Viability Ceiling", 0),
+                "moves": moves,
+                "counters": counters
+            }
+    return None 

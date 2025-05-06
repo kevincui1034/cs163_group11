@@ -19,6 +19,35 @@ def create_correlation_heatmap(df, stat_cols):
         title="Correlation Between Pokémon Stats and Regions"
     )
 
+def create_stats_correlation_heatmap(df, stat_cols):
+    # Calculate correlation matrix for base stats
+    correlation_matrix = df[stat_cols].corr()
+    
+    # Create heatmap
+    fig = px.imshow(
+        correlation_matrix,
+        text_auto='.2f',
+        color_continuous_scale='RdBu',
+        aspect='auto',
+        title='Correlation Between Base Stats'
+    )
+    
+    # Update layout for better readability
+    fig.update_layout(
+        xaxis_title='Base Stat',
+        yaxis_title='Base Stat',
+        coloraxis_colorbar=dict(
+            title='Correlation'
+        )
+    )
+    
+    # Update hover template to show correlation value
+    fig.update_traces(
+        hovertemplate='<b>%{y}</b> vs <b>%{x}</b><br>Correlation: %{z:.2f}<extra></extra>'
+    )
+    
+    return fig
+
 def create_total_stats_scatter(df, stat_cols):
     df['Total'] = df[stat_cols].sum(axis=1)
     mean_total_by_gen = df.groupby('Generation')['Total'].mean().reset_index()
@@ -29,6 +58,37 @@ def create_total_stats_scatter(df, stat_cols):
         title='Mean Total Base Stats by Pokémon Generation',
         labels={"Total": "Average Total Base Stats"}
     )
+
+def create_total_stats_boxplot(df, stat_cols):
+    df['Total'] = df[stat_cols].sum(axis=1)
+    
+    fig = px.box(
+        df,
+        x='Generation',
+        y='Total',
+        title='Distribution of Total Base Stats by Generation',
+        labels={
+            'Generation': 'Pokémon Generation',
+            'Total': 'Total Base Stats'
+        },
+        color='Generation',
+        color_discrete_sequence=px.colors.qualitative.Set2
+    )
+    
+    # Update layout for better readability
+    fig.update_layout(
+        showlegend=False,
+        xaxis=dict(
+            tickmode='linear',
+            tick0=1,
+            dtick=1
+        ),
+        yaxis=dict(
+            range=[df['Total'].min() - 50, df['Total'].max() + 50]
+        )
+    )
+    
+    return fig
 
 def create_team_archetype_visuals(df):
     # Text vectorization on teammate data
@@ -117,13 +177,21 @@ def create_team_archetype_visuals(df):
     return fig, fig_viability
 
 def create_move_usage_graph(moves_data, pokemon_name):
+    """Create a bar graph showing move usage percentages."""
+    import plotly.express as px
+    import pandas as pd
+    
     moves_df = pd.DataFrame(list(moves_data.items()), columns=['Move', 'Usage %'])
     return px.bar(moves_df, x='Move', y='Usage %',
-                  title=f'{pokemon_name} Move Usage',
-                  color='Usage %',
-                  color_continuous_scale='Viridis')
+                 title=f'{pokemon_name} Move Usage',
+                 color='Usage %',
+                 color_continuous_scale='Viridis')
 
 def create_counter_graph(counters_data, pokemon_name):
+    """Create a bar graph showing counter effectiveness."""
+    import plotly.graph_objects as go
+    import pandas as pd
+    
     counters_df = pd.DataFrame(counters_data)
     if not counters_df.empty:
         fig = go.Figure(data=[
@@ -139,6 +207,6 @@ def create_counter_graph(counters_data, pokemon_name):
     else:
         fig = go.Figure()
         fig.add_annotation(text="No counter data available",
-                           xref="paper", yref="paper",
-                           x=0.5, y=0.5, showarrow=False)
+                         xref="paper", yref="paper",
+                         x=0.5, y=0.5, showarrow=False)
     return fig 

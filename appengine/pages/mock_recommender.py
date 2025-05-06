@@ -10,16 +10,16 @@ layout = html.Div([
     
     html.Div([
         html.Img(
-            src='/assets/team_recommender.png',
+            src='assets/mock_recommend.png',
             style={
                 'width': '100%',
-                'maxWidth': '800px',
+                'height': 'auto',
                 'display': 'block',
                 'margin': '0 auto'
             }
         )
     ], style={
-        'maxWidth': '1200px',
+        'width': '100%',
         'margin': '0 auto',
         'padding': '20px'
     })

@@ -13,6 +13,7 @@ navbar = dbc.NavbarSimple(
         dbc.NavItem(dbc.NavLink("Project Objective", href="/project_objective")),
         dbc.NavItem(dbc.NavLink("Analytical Methods", href="/analytical_methods")),
         dbc.NavItem(dbc.NavLink("Major Findings", href="/major_findings")),
+        dbc.NavItem(dbc.NavLink("Pokemon Recommender", href="/mock_recommender")),
         # Not for prod, only for local
         # dbc.NavItem(dbc.NavLink("Pokemon Recommender", href="/pokemon_recommender")),
     ],

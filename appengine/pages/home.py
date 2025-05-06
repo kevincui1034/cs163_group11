@@ -1,56 +1,19 @@
 import dash
 from dash import html, dcc
-import pandas as pd
-import plotly.express as px
-from google.cloud import storage
-import io
+from components.data_loader import load_pokemon_from_gcs, get_generation_to_region_mapping, get_stat_columns
+from components.visualizations import create_total_stats_scatter, create_correlation_heatmap
 
 # Register the page
 dash.register_page(__name__, path='/')
 
-# --- Load CSV from GCS ---
-def load_pokemon_from_gcs():
-    storage_client = storage.Client()
-    bucket = storage_client.bucket('cs163-group11.appspot.com')
-    blob = bucket.blob('Pokemon.csv')
-    content = blob.download_as_string()
-    df = pd.read_csv(io.BytesIO(content))
-    return df
-
 # Load the dataset
 df = load_pokemon_from_gcs()
+df['Region'] = df['Generation'].map(get_generation_to_region_mapping())
+stat_cols = get_stat_columns()
 
-# --- Data Preparation ---
-generation_to_region = {
-    1: 'Kanto', 2: 'Johto', 3: 'Hoenn', 4: 'Sinnoh',
-    5: 'Unova', 6: 'Kalos', 7: 'Alola', 8: 'Galar', 9: 'Paldea'
-}
-df['Region'] = df['Generation'].map(generation_to_region)
-
-stat_cols = ['HP', 'Attack', 'Defense', 'Sp. Atk', 'Sp. Def', 'Speed']
-df['Total'] = df[stat_cols].sum(axis=1)
-
-# --- Graph 1: Total Base Stats by Generation ---
-mean_total_by_gen = df.groupby('Generation')['Total'].mean().reset_index()
-
-fig_total_stats = px.scatter(
-    mean_total_by_gen,
-    x='Generation',
-    y='Total',
-    trendline='ols',
-    title='Average Total Base Stats by Pokémon Generation',
-    labels={'Total': 'Average Total Base Stats', 'Generation': 'Generation'}
-)
-
-# --- Graph 2: Correlation Heatmap Between Stats ---
-correlation_matrix = df[stat_cols].corr()
-
-fig_corr_heatmap = px.imshow(
-    correlation_matrix,
-    text_auto=True,
-    title='Correlation Between Base Stats',
-    labels=dict(color='Correlation', x='Stat', y='Stat')
-)
+# Generate figures
+fig_total_stats = create_total_stats_scatter(df, stat_cols)
+fig_corr_heatmap = create_correlation_heatmap(df, stat_cols)
 
 # --- Layout ---
 layout = html.Div([

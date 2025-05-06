@@ -10,35 +10,20 @@ from sklearn.cluster import KMeans
 from sklearn.decomposition import PCA
 import base64
 from io import BytesIO
+from components.data_loader import load_pokemon_from_gcs, get_generation_to_region_mapping, get_stat_columns
+from components.visualizations import create_correlation_heatmap, create_total_stats_scatter
 
 # Register page
 dash.register_page(__name__, path='/analytical_methods')
 
-# --- Data Preparation ---
-df = pd.read_csv('https://raw.githubusercontent.com/lgreski/pokemonData/refs/heads/master/Pokemon.csv')
+# Load and prepare data
+df = load_pokemon_from_gcs()
+df['Region'] = df['Generation'].map(get_generation_to_region_mapping())
+stat_cols = get_stat_columns()
 
-# Mapping generation to region
-generation_to_region = {
-    1: 'Kanto', 2: 'Johto', 3: 'Hoenn', 4: 'Sinnoh',
-    5: 'Unova', 6: 'Kalos', 7: 'Alola', 8: 'Galar', 9: 'Paldea'
-}
-df['Region'] = df['Generation'].map(generation_to_region)
-
-# Stat columns
-stat_cols = ['HP', 'Attack', 'Defense', 'Sp. Atk', 'Sp. Def', 'Speed']
-
-# --- Correlation Heatmap (Plotly) ---
-region_dummies = pd.get_dummies(df['Region'])
-correlation_data = pd.concat([df[stat_cols], region_dummies], axis=1)
-correlation_matrix = correlation_data.corr()
-region_vs_stats = correlation_matrix.loc[stat_cols, region_dummies.columns]
-
-heatmap_fig = px.imshow(
-    region_vs_stats,
-    text_auto=True,
-    labels=dict(x="Region", y="Stat", color="Correlation"),
-    title="Correlation Between Pokémon Stats and Regions"
-)
+# Generate figures
+heatmap_fig = create_correlation_heatmap(df, stat_cols)
+scatter_fig = create_total_stats_scatter(df, stat_cols)
 
 # --- Elbow Method for Optimal k ---
 scaler = StandardScaler()
@@ -70,17 +55,6 @@ pca_components = pca.fit_transform(X_scaled)
 df['PCA1'] = pca_components[:, 0]
 df['PCA2'] = pca_components[:, 1]
 
-# --- Base Stats Scatter Plot ---
-df['Total'] = df[stat_cols].sum(axis=1)
-mean_total_by_gen = df.groupby('Generation')['Total'].mean().reset_index()
-
-scatter_fig = px.scatter(
-    mean_total_by_gen, x='Generation', y='Total',
-    trendline="ols", trendline_color_override="red",
-    title='Mean Total Base Stats by Pokémon Generation',
-    labels={"Total": "Average Total Base Stats"}
-)
-
 # --- Layout ---
 layout = html.Div([
     html.H1('Analytical Methods', style={'textAlign': 'center'}),
@@ -96,7 +70,7 @@ layout = html.Div([
     ], style={'marginBottom': '50px'}),
     
     html.Div([
-        html.H2("Correlation Heatmap (Interactive)"),
+        html.H2("Correlation Heatmap"),
         dcc.Graph(figure=heatmap_fig, className='graph-style')
     ], style={'marginBottom': '70px'}),
     
@@ -137,9 +111,13 @@ layout = html.Div([
     ], style={'marginBottom': '70px'}),
 
     html.Div([
-        html.H2("Average Base Stats by Generation"),
-        dcc.Graph(figure=scatter_fig, className='graph-style')
-    ])
+        html.P(
+            "We performed K-means clustering with 4 clusters and assigned each Pokémon to one of these clusters. "
+            "To visualize the high-dimensional data, we applied PCA to reduce the data to two components "
+            "and plotted the results in a scatterplot, colored by cluster. This visualization reveals the "
+            "natural groupings of Pokémon based on their stat profiles."
+        )
+    ], style={'marginBottom': '50px'}),
 ], style={
     'maxWidth': '1200px',
     'margin': '0 auto',

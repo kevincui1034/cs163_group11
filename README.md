@@ -27,11 +27,6 @@ This repository contains a data analysis pipeline and web application focused on
    source ./.venv/bin/activate  # On Windows: .\.venv\Scripts\activate
    ```
 
-3. **Install required packages:**
-
-   ```bash
-   pip install -r requirements.txt
-   ```
 
 ## Pipeline Overview
 

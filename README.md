@@ -20,11 +20,18 @@ This repository contains a data analysis pipeline and web application focused on
    cd cs163_group11
    ```
 
-2. **Create and activate a virtual environment (optional but recommended):**
+2. **Create and activate a virtual environment:**
 
    ```bash
    python -m venv .venv
    source ./.venv/bin/activate  # On Windows: .\.venv\Scripts\activate
+   ```
+
+3. **Run the website:**
+
+   ```bash
+   cd appengine
+   python app.py
    ```
 
 
@@ -56,6 +63,9 @@ This repository contains a data analysis pipeline and web application focused on
    - `/assets/`: For custom CSS styling.
    - `/components/`: Functions used for page callbacks.
       - `/data/`: Data for local deployment and testing.
+      ************
+      - `/models`: Not hosted on GitHub, has pretrained models for the Pokemon Recommender, 8GB model for each month of data
+      ************
    - `/pages/`: Routes for each page of the website.
 
 ## 🔗 Live Website

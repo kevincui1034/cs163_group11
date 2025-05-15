@@ -63,6 +63,28 @@ layout = html.Div([
     html.Div([
         html.H2("Pokemon Move Recommender Model Analysis", style={'textAlign': 'center', 'marginBottom': '30px'}),
         
+        # Model Explanation
+        html.Div([
+            html.P([
+                "1. ", html.Strong("Feature Extraction: "), "For each Pokemon, we extract key features including:",
+                html.Ul([
+                    html.Li("Base stats and viability metrics"),
+                    html.Li("Move usage statistics"),
+                    html.Li("Counter and check relationships"),
+                    html.Li("Average KO and switch-out rates")
+                ]),
+                html.Br(),
+                "2. ", html.Strong("Dimensionality Reduction: "), "We use Principal Component Analysis (PCA) to reduce the feature space to 5 components, ",
+                "which helps capture the most important patterns while reducing noise.",
+                html.Br(), html.Br(),
+                "3. ", html.Strong("Model Training: "), "A Random Forest Classifier is trained on these features to predict the optimal move choice. ",
+                "The model learns patterns from actual battle data, considering both offensive and defensive scenarios.",
+                html.Br(), html.Br(),
+                "4. ", html.Strong("Prediction: "), "When given a matchup, the model analyzes the relationship between the two Pokemon and recommends ",
+                "either the best move to use or suggests switching out if the matchup is unfavorable."
+            ], style={'textAlign': 'left', 'maxWidth': '800px', 'margin': '0 auto', 'padding': '20px'})
+        ], style={'marginBottom': '30px'}),
+        
         # Overall Performance and PCA in a two-column layout
         html.Div([
             # Left column - Overall Performance

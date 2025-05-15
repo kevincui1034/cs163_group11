@@ -90,7 +90,7 @@ This repository contains a data analysis pipeline and web application focused on
    - `/components/`: Functions used for page callbacks.
       - data_loader.py: handles loading the data for GCS or loading it for local testing.
       - pokemon_move_recommender.py: Generates optimal move given current Pokemon and opposing Pokemon. **Not for web hosting because model is too large, 8GB per every month of data**
-      - train_and_save_model.py: Trains and saves the model into a pickle file.
+      - train_and_save_model.py: Trains and saves the model into a pickle file. <-- Must run this to generate model for the recommender on local setup
       - visualizations.py: Handles the graphs for each page.
       - `/data/`: Data for local deployment and testing.
       ************

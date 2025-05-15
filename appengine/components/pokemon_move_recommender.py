@@ -7,6 +7,8 @@ from sklearn.decomposition import PCA
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
+from sklearn.metrics import classification_report, confusion_matrix, accuracy_score, precision_score, recall_score, f1_score
+import numpy as np
 
 # --- Feature Extraction ---
 def extract_features_from_full(p):
@@ -111,6 +113,71 @@ def train_model(pokemon_data):
     X_train, X_test, y_train, y_test = train_test_split(X_pca, y_data, test_size=0.2, random_state=42)
     clf = RandomForestClassifier(n_estimators=50, random_state=42)
     clf.fit(X_train, y_train)
+
+    # Make predictions
+    y_pred = clf.predict(X_test)
+    
+    # Print classification metrics
+    print("\n=== Classification Metrics ===")
+    print("\nClassification Report:")
+    print(classification_report(y_test, y_pred))
+    
+    print("\nConfusion Matrix:")
+    print(confusion_matrix(y_test, y_pred))
+    
+    print("\nOverall Metrics:")
+    print(f"Accuracy: {accuracy_score(y_test, y_pred):.4f}")
+    print(f"Precision (weighted): {precision_score(y_test, y_pred, average='weighted'):.4f}")
+    print(f"Recall (weighted): {recall_score(y_test, y_pred, average='weighted'):.4f}")
+    print(f"F1 Score (weighted): {f1_score(y_test, y_pred, average='weighted'):.4f}")
+    
+    # Train a separate model on original features to get feature importance
+    X_train_orig, X_test_orig, y_train_orig, y_test_orig = train_test_split(X_scaled, y_data, test_size=0.2, random_state=42)
+    clf_orig = RandomForestClassifier(n_estimators=50, random_state=42)
+    clf_orig.fit(X_train_orig, y_train_orig)
+    
+    # Feature importance for original features
+    feature_importance = pd.DataFrame({
+        'feature': df.columns,
+        'importance': clf_orig.feature_importances_
+    })
+    feature_importance = feature_importance.sort_values('importance', ascending=False)
+    
+    print("\nTop 10 Most Important Features:")
+    print(feature_importance.head(10).to_string(index=False))
+    
+    # PCA explained variance
+    print("\nPCA Explained Variance:")
+    print(f"Total explained variance: {sum(pca.explained_variance_ratio_):.4f}")
+    for i, ratio in enumerate(pca.explained_variance_ratio_):
+        print(f"PC{i+1}: {ratio:.4f}")
+
+    # Class distribution
+    class_dist = pd.Series(y_data).value_counts()
+    print("\nClass Distribution (Top 10 most common moves):")
+    print(class_dist.head(10))
+
+    # Move performance summary
+    move_performance = []
+    for move in class_dist.index:
+        y_true_move = np.array(y_test) == move
+        y_pred_move = np.array(y_pred) == move
+        if np.any(y_true_move):  # Only calculate metrics if the move appears in test set
+            move_performance.append({
+                'Move': move,
+                'Count': class_dist[move],
+                'Precision': precision_score(y_true_move, y_pred_move, zero_division=0),
+                'Recall': recall_score(y_true_move, y_pred_move, zero_division=0),
+                'F1': f1_score(y_true_move, y_pred_move, zero_division=0)
+            })
+    
+    move_performance_df = pd.DataFrame(move_performance)
+    
+    print("\nTop 10 Best Performing Moves (by F1 score):")
+    print(move_performance_df.sort_values('F1', ascending=False).head(10).to_string(index=False))
+    
+    print("\nTop 10 Worst Performing Moves (by F1 score):")
+    print(move_performance_df.sort_values('F1').head(10).to_string(index=False))
 
     return clf, scaler, pca, df, pokemon_data
 

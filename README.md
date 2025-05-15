@@ -56,6 +56,30 @@ This repository contains a data analysis pipeline and web application focused on
    - Deploy the application using Google App Engine.
 
 ## Directory Structure
+   ```
+/appengine/
+├── app.py                          # Main Dash app layout and routing
+├── app.yaml                        # Google App Engine deployment config
+├── assets/                         # Static assets like CSS and images
+│   └── ...                         # Custom styles and pictures
+├── components/                     # Functional logic and model utilities
+│   ├── data_loader.py              # Loads data from GCS or local files
+│   ├── pokemon_move_recommender.py # Generates recommended move (model too large for deployment)
+│   ├── train_and_save_model.py     # Trains and pickles the model
+│   ├── visualizations.py           # Handles graph generation
+│   ├── data/                       # Sample data for local testing
+│   │   └── ...
+│   └── models/                     # Pretrained models (not on GitHub, ~8GB per month)
+│       └── ...
+├── pages/                          # Multi-page Dash app routes
+│   └── ...                         # Individual page scripts (e.g., overview.py, recommender.py)
+
+/pokemon_analysis/                        # Not related to web app but for initial data scraping and cleaning
+├── data/                                 # CSV Processing
+├── json parsing/
+│   ├── data/                             # Additional JSON-based input files
+   ```
+## Brief Directory Information
 
 - `/pokemon_analysis/`: Contains scripts and notebooks for data preprocessing and analysis. **Not for web application**
 - `/appengine/`: Houses the web app functionality, components, data, routes.

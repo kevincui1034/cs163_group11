@@ -58,7 +58,7 @@ def is_threatened(p1, p2_name):
 # --- Model Loading ---
 def load_model():
     """Load the trained model from local file."""
-    model_path = os.path.join('components', 'models', 'pokemon_model.pkl')
+    model_path = os.path.join(os.path.dirname(__file__), 'models', 'pokemon_model.pkl')
     try:
         print(f"Attempting to load model from: {os.path.abspath(model_path)}")
         with open(model_path, 'rb') as f:

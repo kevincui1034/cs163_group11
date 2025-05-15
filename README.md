@@ -31,6 +31,7 @@ This repository contains a data analysis pipeline and web application focused on
 
    ```bash
    cd appengine
+   pip install -r requirements.txt
    python app.py
    ```
 
@@ -61,7 +62,7 @@ This repository contains a data analysis pipeline and web application focused on
 ├── app.py                          # Main Dash app layout and routing
 ├── app.yaml                        # Google App Engine deployment config
 ├── assets/                         # Static assets like CSS and images
-│   └── ...                         # Custom styles and pictures
+│   └── ...                         
 ├── components/                     # Functional logic and model utilities
 │   ├── data_loader.py              # Loads data from GCS or local files
 │   ├── pokemon_move_recommender.py # Generates recommended move (model too large for deployment)
@@ -69,7 +70,7 @@ This repository contains a data analysis pipeline and web application focused on
 │   ├── visualizations.py           # Handles graph generation
 │   ├── data/                       # Sample data for local testing
 │   │   └── ...
-│   └── models/                     # Pretrained models (not on GitHub, ~8GB per month)
+│   └── models/                     # Pretrained models (not on GitHub, ~8GB per data file)
 │       └── ...
 ├── pages/                          # Multi-page Dash app routes
 │   └── ...                         # Individual page scripts (e.g., overview.py, recommender.py)
@@ -79,7 +80,7 @@ This repository contains a data analysis pipeline and web application focused on
 ├── json parsing/
 │   ├── data/                             # Additional JSON-based input files
    ```
-## Brief Directory Information
+## Brief Directory Information and Notes for Local Setup
 
 - `/pokemon_analysis/`: Contains scripts and notebooks for data preprocessing and analysis. **Not for web application**
 - `/appengine/`: Houses the web app functionality, components, data, routes.
@@ -89,12 +90,15 @@ This repository contains a data analysis pipeline and web application focused on
    - `/assets/`: For custom CSS styling and pictures.
    - `/components/`: Functions used for page callbacks.
       - data_loader.py: handles loading the data for GCS or loading it for local testing.
-      - pokemon_move_recommender.py: Generates optimal move given current Pokemon and opposing Pokemon. **Not for web hosting because model is too large, 8GB per every month of data**
-      - train_and_save_model.py: Trains and saves the model into a pickle file. <-- Must run this to generate model for the recommender on local setup
+      - pokemon_move_recommender.py: Generates optimal move given current Pokemon and opposing Pokemon.
+         - **Not for web hosting because model is too large, 8GB per every month of data (Dataset has years of data)**
+      - train_and_save_model.py: Trains and saves the model into a pickle file.
+         - Must run this to generate model for the recommender on local setup
       - visualizations.py: Handles the graphs for each page.
       - `/data/`: Data for local deployment and testing.
       ************
       - `/models/`: Not hosted on GitHub, has pretrained models for the Pokemon Recommender, 8GB model for each month of data
+         - train_and_save_model.py will save the model here.
       ************
    - `/pages/`: Holds each page for this multi-page Dash app.
 

@@ -128,24 +128,24 @@ def build_predictor(model, scaler, pca, pokemon_data):
 
         # Create feature dictionary with consistent naming
         features = {}
-        # Add Pokemon 1 features
+        # Add Pokemon 1 features with p1_p1_ prefix
         for k, v in f1.items():
-            features[k] = v
-        # Add Pokemon 2 features with p2_ prefix
+            features[f"p1_{k}"] = v
+        # Add Pokemon 2 features with p2_p1_ prefix
         for k, v in f2.items():
-            features[k.replace('p1_', 'p2_')] = v
+            features[f"p2_{k}"] = v
 
         # Create DataFrame with all expected features
         df_row = pd.DataFrame([features])
         
         # Ensure all expected features exist
         expected_features = [
-            'p1_raw_count', 'p1_viability_ceiling',
-            'p1_move_1', 'p1_move_2', 'p1_move_3', 'p1_move_4',
-            'p1_avg_koed', 'p1_avg_switched',
-            'p2_raw_count', 'p2_viability_ceiling',
-            'p2_move_1', 'p2_move_2', 'p2_move_3', 'p2_move_4',
-            'p2_avg_koed', 'p2_avg_switched'
+            'p1_p1_raw_count', 'p1_p1_viability_ceiling',
+            'p1_p1_move_1', 'p1_p1_move_2', 'p1_p1_move_3', 'p1_p1_move_4',
+            'p1_p1_avg_koed', 'p1_p1_avg_switched',
+            'p2_p1_raw_count', 'p2_p1_viability_ceiling',
+            'p2_p1_move_1', 'p2_p1_move_2', 'p2_p1_move_3', 'p2_p1_move_4',
+            'p2_p1_avg_koed', 'p2_p1_avg_switched'
         ]
         
         # Fill missing features with 0
@@ -179,6 +179,20 @@ def build_predictor(model, scaler, pca, pokemon_data):
         return f"Recommended move: {prediction}"
 
     return recommend_move
+
+def get_pokemon_info(pokemon_name, pokemon_data):
+    """Get Pokemon information from the data."""
+    for pokemon in pokemon_data:
+        if pokemon["Pokemon"].lower() == pokemon_name.lower():
+            moves = pokemon.get("Moves", {})
+            counters = pokemon.get("Checks and Counters", [])
+            return {
+                "raw_count": pokemon.get("Raw Count", 0),
+                "viability_ceiling": pokemon.get("Viability Ceiling", 0),
+                "moves": moves,
+                "counters": counters
+            }
+    return None
 
 if __name__ == "__main__":
     # Load model and create predictor

@@ -1,7 +1,8 @@
 import dash
 from dash import html, dcc, Input, Output, State, callback
 import json
-from components.model_utils import load_model_from_gcs, get_pokemon_info
+import pandas as pd
+from components.pokemon_move_recommender import load_model, get_pokemon_info, build_predictor
 from components.visualizations import create_move_usage_graph, create_counter_graph
 
 # Load Pokemon data
@@ -40,8 +41,10 @@ layout = html.Div([
 def update_output(n_clicks, pokemon1, pokemon2):
     if n_clicks > 0 and pokemon1 and pokemon2:
         try:
-            # Load cached or streamed model
-            recommend = load_model_from_gcs()
+            # Load model and create predictor
+            model_data = load_model()
+            model, scaler, pca, _, _ = model_data
+            recommend = build_predictor(model, scaler, pca, pokemon_data)
 
             recommendation = recommend(pokemon1, pokemon2)
 
@@ -51,7 +54,7 @@ def update_output(n_clicks, pokemon1, pokemon2):
             if not p1_info or not p2_info:
                 return "Error: One or both Pokemon not found.", {}, {}
 
-            # Create visualizations
+            # Create visualizations using imported functions
             move_fig = create_move_usage_graph(p1_info["moves"], pokemon1)
             counter_fig = create_counter_graph(p1_info["counters"], pokemon1)
 

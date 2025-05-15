@@ -178,35 +178,63 @@ def create_team_archetype_visuals(df):
 
 def create_move_usage_graph(moves_data, pokemon_name):
     """Create a bar graph showing move usage percentages."""
-    import plotly.express as px
-    import pandas as pd
-    
-    moves_df = pd.DataFrame(list(moves_data.items()), columns=['Move', 'Usage %'])
-    return px.bar(moves_df, x='Move', y='Usage %',
-                 title=f'{pokemon_name} Move Usage',
-                 color='Usage %',
-                 color_continuous_scale='Viridis')
+    if not moves_data:
+        fig = go.Figure()
+        fig.add_annotation(text="No move data available",
+                         xref="paper", yref="paper",
+                         x=0.5, y=0.5, showarrow=False)
+        return fig
+
+    moves = list(moves_data.items())
+    fig = go.Figure(data=[
+        go.Bar(
+            x=[m[0] for m in moves],
+            y=[m[1] for m in moves],
+            marker_color='rgb(55, 83, 109)'
+        )
+    ])
+    fig.update_layout(
+        title=f'{pokemon_name} Move Usage',
+        xaxis_title='Move',
+        yaxis_title='Usage %',
+        showlegend=False
+    )
+    return fig
 
 def create_counter_graph(counters_data, pokemon_name):
     """Create a bar graph showing counter effectiveness."""
-    import plotly.graph_objects as go
-    import pandas as pd
-    
-    counters_df = pd.DataFrame(counters_data)
-    if not counters_df.empty:
-        fig = go.Figure(data=[
-            go.Bar(name='KO %', x=counters_df['Name'], y=counters_df['KOed']),
-            go.Bar(name='Switch %', x=counters_df['Name'], y=counters_df['Switched Out'])
-        ])
-        fig.update_layout(
-            title=f'{pokemon_name} Counters',
-            barmode='group',
-            xaxis_title='Counter Pokemon',
-            yaxis_title='Percentage'
-        )
-    else:
+    if not counters_data:
         fig = go.Figure()
         fig.add_annotation(text="No counter data available",
                          xref="paper", yref="paper",
                          x=0.5, y=0.5, showarrow=False)
+        return fig
+        
+    fig = go.Figure(data=[
+        go.Bar(
+            name='KO %',
+            x=[c['Name'] for c in counters_data],
+            y=[c['KOed'] for c in counters_data],
+            marker_color='rgb(219, 64, 82)'
+        ),
+        go.Bar(
+            name='Switch %',
+            x=[c['Name'] for c in counters_data],
+            y=[c['Switched Out'] for c in counters_data],
+            marker_color='rgb(55, 83, 109)'
+        )
+    ])
+    fig.update_layout(
+        title=f'{pokemon_name} Counters',
+        barmode='group',
+        xaxis_title='Counter Pokemon',
+        yaxis_title='Percentage',
+        showlegend=True,
+        legend=dict(
+            yanchor="top",
+            y=0.99,
+            xanchor="left",
+            x=1.05
+        )
+    )
     return fig 

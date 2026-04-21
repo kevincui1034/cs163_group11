@@ -4,6 +4,7 @@ dash
 dash_bootstrap_components
 scikit-learn
 plotly
+statsmodels
 pandas
 numpy
 matplotlib

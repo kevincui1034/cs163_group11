@@ -49,5 +49,6 @@ On Windows PowerShell: `$env:USE_GCS='0'` before `vercel dev`.
 ## Notes
 
 - **`app.yaml` / `gunicorn`**: Used for Google App Engine only; Vercel does not use them.
-- **Bundle size / cold starts**: `scikit-learn` and related libs are heavy. [`vercel.json`](vercel.json) excludes `pokemon_analysis/**` from the Python function bundle. If you hit size or timeout limits, trim further under `functions.excludeFiles` or reduce dependencies.
+- **Project root**: In Vercel → Settings → General → **Root Directory**, leave this empty (repo root). If it is set to `appengine`, the build will not see [`api/index.py`](api/index.py) and configuration can fail.
+- **Bundle size / cold starts**: `scikit-learn` and related libs are heavy. [`.vercelignore`](.vercelignore) skips uploading `pokemon_analysis/` (not needed for the web app). If you still hit size or timeout limits, trim dependencies or pages.
 - **Pokemon recommender page**: The full recommender (`/pokemon_recommender`) is not linked in the navbar in [`appengine/app.py`](appengine/app.py); it depends on large local model files that may not be present in deployment.

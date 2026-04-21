@@ -54,7 +54,7 @@ This repository contains a data analysis pipeline and web application focused on
 4. **Web Application Development:**
    - Utilizes Flask framework for web development.
    - Dash framework for styling and graphs.
-   - Deploy the application using Google App Engine.
+   - Deploy the application using Google App Engine or [Vercel](VERCEL.md).
 
 ## Directory Structure
    ```

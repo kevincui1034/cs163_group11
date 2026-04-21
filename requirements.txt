@@ -1,0 +1,2 @@
+# Root file for Vercel; installs app dependencies from appengine.
+-r appengine/requirements.txt

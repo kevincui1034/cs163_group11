@@ -1,11 +1,9 @@
+# Runtime deps for the Dash app (used locally, App Engine, and Vercel).
+# dash pulls in dash-core-components and dash-html-components.
 dash
-dash_core_components
-dash_html_components
 dash_bootstrap_components
-dash_bootstrap_templates
 scikit-learn
 plotly
-plotly_express
 pandas
 numpy
 matplotlib

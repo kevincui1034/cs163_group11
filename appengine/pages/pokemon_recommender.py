@@ -1,12 +1,15 @@
+import json
+from pathlib import Path
+
 import dash
 from dash import html, dcc, Input, Output, State, callback
-import json
-import pandas as pd
+
 from components.pokemon_move_recommender import load_model, get_pokemon_info, build_predictor
 from components.visualizations import create_move_usage_graph, create_counter_graph
 
-# Load Pokemon data
-with open("./components/data/gen9ou_full_data.json", "r") as f:
+# Load Pokemon data (path relative to this file so imports work when CWD is not appengine/)
+_GEN9OU_PATH = Path(__file__).resolve().parent.parent / "components" / "data" / "gen9ou_full_data.json"
+with open(_GEN9OU_PATH, "r", encoding="utf-8") as f:
     pokemon_data = json.load(f)
 
 # Register Dash page

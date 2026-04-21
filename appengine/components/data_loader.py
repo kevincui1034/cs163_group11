@@ -3,13 +3,39 @@ import json
 from google.cloud import storage
 import io
 import os
+import tempfile
 
 USE_GCS = os.environ.get('USE_GCS', '0') == '1'  # Default: use local files
-BUCKET_NAME = 'cs163-group11.appspot.com'
+# Prefer env (e.g. Vercel / other hosts); fall back to historical App Engine bucket.
+BUCKET_NAME = os.environ.get('BUCKET_NAME', 'cs163-group11.appspot.com')
+
+
+def _ensure_gcs_credentials():
+    """
+    Allow GCS auth on hosts without a credentials file path (e.g. Vercel).
+
+    Set GCP_SERVICE_ACCOUNT_JSON to the raw JSON string of a service account
+    that can read/write the bucket. If GOOGLE_APPLICATION_CREDENTIALS is
+    already set, this is a no-op.
+    """
+    if os.environ.get('GOOGLE_APPLICATION_CREDENTIALS'):
+        return
+    raw = os.environ.get('GCP_SERVICE_ACCOUNT_JSON')
+    if not raw:
+        return
+    path = os.path.join(tempfile.gettempdir(), 'vercel_gcp_sa.json')
+    # Write once per cold start path (overwrite if env changed)
+    with open(path, 'w', encoding='utf-8') as f:
+        f.write(raw)
+    os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = path
+
+
 POKEMON_BLOB = 'Pokemon.csv'
 GEN9OU_BLOB = 'gen9ou_full_data.json'
-POKEMON_LOCAL = 'components/data/Pokemon.csv'
-GEN9OU_LOCAL = 'components/data/gen9ou_full_data.json'
+# Paths relative to this file so loads work when CWD is repo root (e.g. Vercel).
+_COMPONENT_DIR = os.path.dirname(os.path.abspath(__file__))
+POKEMON_LOCAL = os.path.join(_COMPONENT_DIR, 'data', 'Pokemon.csv')
+GEN9OU_LOCAL = os.path.join(_COMPONENT_DIR, 'data', 'gen9ou_full_data.json')
 
 def get_generation_to_region_mapping():
     return {
@@ -23,6 +49,7 @@ def get_stat_columns():
 if USE_GCS:
     def load_pokemon_data():
         """Load Pokemon data from GCS bucket."""
+        _ensure_gcs_credentials()
         client = storage.Client()
         bucket = client.bucket(BUCKET_NAME)
         blob = bucket.blob(POKEMON_BLOB)
@@ -31,6 +58,7 @@ if USE_GCS:
 
     def load_gen9ou_data():
         """Load Gen 9 OU data from GCS bucket."""
+        _ensure_gcs_credentials()
         client = storage.Client()
         bucket = client.bucket(BUCKET_NAME)
         blob = bucket.blob(GEN9OU_BLOB)
@@ -52,6 +80,7 @@ if USE_GCS:
 
     def save_pokemon_data(df):
         """Save Pokemon data to GCS bucket."""
+        _ensure_gcs_credentials()
         client = storage.Client()
         bucket = client.bucket(BUCKET_NAME)
         blob = bucket.blob(POKEMON_BLOB)
@@ -61,6 +90,7 @@ if USE_GCS:
 
     def save_gen9ou_data(df):
         """Save Gen 9 OU data to GCS bucket."""
+        _ensure_gcs_credentials()
         client = storage.Client()
         bucket = client.bucket(BUCKET_NAME)
         blob = bucket.blob(GEN9OU_BLOB)
